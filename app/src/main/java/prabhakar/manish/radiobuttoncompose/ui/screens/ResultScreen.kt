@@ -69,6 +69,19 @@ fun ResultScreen(
 
         Spacer(modifier = Modifier.height(8.dp)) // Add some space between buttons
 
-
+//        // Quit Quiz Button
+//        Button(
+//            onClick = { onQuitQuiz() },
+//            modifier = Modifier
+//                .padding(16.dp)
+//                .fillMaxWidth(),
+//            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error), // Use error color for quit
+//            shape = RoundedCornerShape(8.dp) // Rounded corners for button
+//        ) {
+//            Text(
+//                text = "Quit Quiz",
+//                style = MaterialTheme.typography.titleMedium // Keep the style consistent
+//            )
+//        }
     }
 }
