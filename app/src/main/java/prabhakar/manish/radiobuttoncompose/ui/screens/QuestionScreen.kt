@@ -1,120 +1,195 @@
 package prabhakar.manish.radiobuttoncompose.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import prabhakar.manish.radiobuttoncompose.ui.theme.Question
 
 @Composable
 fun QuestionScreen(
     question: Question,
-    totalQuestions: Int,  // Total number of questions
-    currentQuestionIndex: Int, // Current question index
+    totalQuestions: Int,
+    currentQuestionIndex: Int,
     onAnswerSelected: (Boolean) -> Unit,
-    onNextQuestion: () -> Unit, // Callback to load the next question
-    onQuitQuiz: () -> Unit // Callback for quitting the quiz
+    onNextQuestion: () -> Unit,
+    onPreviousQuestion: () -> Unit,
+    onQuitQuiz: () -> Unit
 ) {
-    var selectedOptionIndex by remember { mutableStateOf(-1) }
-    var showQuitDialog by remember { mutableStateOf(false) } // State for the quit dialog
+    var selectedOptionIndex by rememberSaveable { mutableStateOf(-1) }
+    var showQuitDialog by rememberSaveable { mutableStateOf(false) }
 
-    // Reset selection for new questions
     LaunchedEffect(question) {
-        selectedOptionIndex = -1 // Reset to unselected when the question changes
+        selectedOptionIndex = -1
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = question.question,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 12.dp) // Slightly reduced padding
-        )
+    // Create a scroll state
+    val scrollState = rememberScrollState()
 
-        question.options.forEachIndexed { index, option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+    Card(
+        modifier = Modifier
+            .padding(15.dp, 50.dp, 15.dp, 50.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxHeight(0.9f)) {
+            // Make the column scrollable
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { // Make the entire row clickable
-                        selectedOptionIndex = index
-                    }
-                    .padding(15.dp) // Padding inside the row for aesthetics
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .background(Color(0xFFF0F0F0)) // Light grey background
+                    .verticalScroll(scrollState), // Enable vertical scrolling
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RadioButton(
-                    selected = selectedOptionIndex == index,
-                    onClick = null, // Set to null to avoid handling click separately
-                    modifier = Modifier.size(20.dp) // Adjusted radio button size
-                )
-                Text(
-                    text = option,
-                    style = MaterialTheme.typography.bodyLarge,
+                // Enhanced Material Progress Bar
+                LinearProgressIndicator(
+                    progress = (currentQuestionIndex + 1) / totalQuestions.toFloat(),
                     modifier = Modifier
-                        .padding(start = 8.dp) // Slightly reduced spacing for readability
-                        .weight(1f) // Allow text to occupy available space
+                        .fillMaxWidth()
+                        .height(20.dp) // Slightly taller for visibility
+                        .clip(MaterialTheme.shapes.small)
+                        .padding(bottom = 16.dp),
+                    color = MaterialTheme.colorScheme.primary, // Progress color
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant // Background color
+                )
+
+                // Progress Text with larger font for readability
+                Text(
+                    text = "Question ${currentQuestionIndex + 1} of $totalQuestions",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp
+                )
+
+                // Title Text
+                Text(
+                    text = question.question,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(bottom = 12.dp, start = 3.dp, end = 3.dp)
+                )
+
+                // Options
+                question.options.forEachIndexed { index, option ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedOptionIndex = index
+                            }
+                            .padding(15.dp)
+                    ) {
+                        RadioButton(
+                            selected = selectedOptionIndex == index,
+                            onClick = null, // Disable click on radio button itself
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = option,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .weight(1f)
+                        )
+                    }
+                }
+
+                // Row for Previous and Next buttons
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Previous Button
+                    Button(
+                        onClick = { onPreviousQuestion() },
+                        enabled = currentQuestionIndex > 0,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Previous"
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Previous")
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    // Next Button
+                    Button(
+                        onClick = {
+                            if (selectedOptionIndex != -1) {
+                                val isCorrect = selectedOptionIndex == question.correctAnswer
+                                onAnswerSelected(isCorrect)
+                                onNextQuestion()
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text("Next")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.Filled.ArrowForward,
+                            contentDescription = "Next"
+                        )
+                    }
+                }
+            }
+
+            // Top Right Exit Icon
+            IconButton(
+                onClick = { showQuitDialog = true },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Exit Quiz",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
-
-        Button(
-            onClick = {
-                if (selectedOptionIndex != -1) { // Ensure an option is selected
-                    val isCorrect = selectedOptionIndex == question.correctAnswer
-                    onAnswerSelected(isCorrect)
-                    onNextQuestion() // Load the next question after answering
-                }
-            },
-            modifier = Modifier
-                .padding(top = 16.dp) // Moderate padding
-                .fillMaxWidth()
-                .height(48.dp), // Slightly reduced button height
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
-            shape = MaterialTheme.shapes.medium // Use default shape style
-        ) {
-            Text(
-                text = "Next",
-                style = MaterialTheme.typography.titleMedium // Updated style
-            )
-        }
-
-        // Quit Button
-        Button(
-            onClick = { showQuitDialog = true },
-            modifier = Modifier
-                .padding(top = 12.dp) // Moderate padding
-                .fillMaxWidth()
-                .height(48.dp), // Slightly reduced button height
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error // Optional: Use error color
-            ),
-            shape = MaterialTheme.shapes.medium // Use default shape style
-        ) {
-            Text(
-                text = "Quit Quiz",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
     }
 
-    // Confirmation Dialog
+    // Quit Confirmation Dialog
     if (showQuitDialog) {
         ConfirmationDialog(
             onConfirm = {
-                onQuitQuiz() // Call the quit function
-                showQuitDialog = false // Dismiss the dialog
+                onQuitQuiz()
+                showQuitDialog = false
             },
             onDismiss = {
-                showQuitDialog = false // Just dismiss the dialog
+                showQuitDialog = false
             }
         )
     }
@@ -128,9 +203,7 @@ fun ConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         title = { Text(text = "Quit Quiz") },
         text = { Text("Are you sure you want to quit the quiz?") },
         confirmButton = {
-            Button(onClick = {
-                onConfirm()
-            }) {
+            Button(onClick = onConfirm) {
                 Text("Yes")
             }
         },

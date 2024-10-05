@@ -3,16 +3,19 @@ package prabhakar.manish.radiobuttoncompose.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.lazy.LazyColumn
 
 @Composable
 fun ResultScreen(
-    correctAnswers: Int,
+    correctAnswers: List<String>, // List of correct answers
+    incorrectAnswers: List<String>, // List of incorrect answers
     totalQuestions: Int,
     onRestartQuiz: () -> Unit,
     onQuitQuiz: () -> Unit // Callback for quitting
@@ -20,7 +23,11 @@ fun ResultScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f), shape = RoundedCornerShape(16.dp)), // Background with rounded corners
+            .padding(16.dp)
+            .background(
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(16.dp)
+            ), // Background with rounded corners
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -30,13 +37,13 @@ fun ResultScreen(
             modifier = Modifier.padding(16.dp)
         )
         Text(
-            text = "You answered $correctAnswers out of $totalQuestions correctly.",
+            text = "You answered ${correctAnswers.size} out of $totalQuestions correctly.",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(16.dp)
         )
 
         // Show a smiley or sad face based on performance
-        val smiley = if (correctAnswers > totalQuestions / 2) "😊" else "😞"
+        val smiley = if (correctAnswers.size > totalQuestions / 2) "😊" else "😞"
         Text(
             text = smiley,
             fontSize = MaterialTheme.typography.headlineLarge.fontSize * 2, // Make it bigger
@@ -45,12 +52,84 @@ fun ResultScreen(
 
         // Progress indicator based on performance
         LinearProgressIndicator(
-            progress = correctAnswers.toFloat() / totalQuestions,
+            progress = correctAnswers.size.toFloat() / totalQuestions,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             color = MaterialTheme.colorScheme.primary
         )
+
+        // Display correct answers
+        if (correctAnswers.isNotEmpty() || incorrectAnswers.isNotEmpty()) {
+            Text(
+                text = "Results:",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            // Wrap answers in a LazyColumn for scrolling
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(0.8f)
+                    .padding(vertical = 8.dp)
+            ) {
+                // Display correct answers
+                if (correctAnswers.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Correct Answers:",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+                    }
+                    correctAnswers.forEach { answer ->
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFB2FFB2)) // Light green color
+                            ) {
+                                Text(
+                                    text = answer,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Display incorrect answers
+                if (incorrectAnswers.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Incorrect Answers:",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+                    }
+                    incorrectAnswers.forEach { answer ->
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFB2B2)) // Light red color
+                            ) {
+                                Text(
+                                    text = answer,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(16.dp),
+                                    color = Color.Red // Set text color to red for incorrect answers
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // Restart Quiz Button
         Button(
@@ -66,22 +145,5 @@ fun ResultScreen(
                 style = MaterialTheme.typography.titleMedium // Keep the style consistent
             )
         }
-
-        Spacer(modifier = Modifier.height(8.dp)) // Add some space between buttons
-
-//        // Quit Quiz Button
-//        Button(
-//            onClick = { onQuitQuiz() },
-//            modifier = Modifier
-//                .padding(16.dp)
-//                .fillMaxWidth(),
-//            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error), // Use error color for quit
-//            shape = RoundedCornerShape(8.dp) // Rounded corners for button
-//        ) {
-//            Text(
-//                text = "Quit Quiz",
-//                style = MaterialTheme.typography.titleMedium // Keep the style consistent
-//            )
-//        }
     }
 }

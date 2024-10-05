@@ -11,10 +11,10 @@ import prabhakar.manish.radiobuttoncompose.ui.theme.MyAppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+       // enableEdgeToEdge()
         setContent {
             MyAppTheme {
-                QuizApp()
+                QuizApp(this)
             }
         }
     }

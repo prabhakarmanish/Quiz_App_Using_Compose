@@ -31,58 +31,57 @@ fun getQuestions(): List<Question> {
                 "Creates animations"
             ),
             correctAnswer = 0
-        )// Index of the correct option
-//        ),
-//        Question(
-//            question = "Which layout is used to arrange components in a vertical or horizontal manner?",
-//            options = listOf("Column and Row", "Grid", "Box", "List"),
-//            correctAnswer = 0 // Index of the correct option
-//        ),
-//        Question(
-//            question = "What is the purpose of 'remember' in Compose?",
-//            options = listOf(
-//                "To store state across recompositions",
-//                "To create animations",
-//                "To handle navigation",
-//                "To define layouts"
-//            ),
-//            correctAnswer = 0 // Index of the correct option
-//        ),
-//        Question(
-//            question = "How do you specify colors in Jetpack Compose?",
-//            options = listOf(
-//                "Using Color class",
-//                "Using Hex codes",
-//                "Using Resource IDs",
-//                "All of the above"
-//            ),
-//            correctAnswer = 3 // Index of the correct option
-//        ),
-//        Question(
-//            question = "Which function is used to display a list of items in Jetpack Compose?",
-//            options = listOf("LazyColumn", "RecyclerView", "Column", "List"),
-//            correctAnswer = 0 // Index of the correct option
-//        ),
-//        Question(
-//            question = "What is the purpose of 'LaunchedEffect' in Compose?",
-//            options = listOf(
-//                "To run side effects in response to state changes",
-//                "To manage layout updates",
-//                "To create animations",
-//                "To define UI structure"
-//            ),
-//            correctAnswer = 0 // Index of the correct option
-//        ),
-//        Question(
-//            question = "How do you handle clicks in Jetpack Compose?",
-//            options = listOf(
-//                "Using Modifier.clickable",
-//                "Using OnClickListener",
-//                "Using GestureDetector",
-//                "Using View.OnClick"
-//            ),
-//            correctAnswer = 0 // Index of the correct option
-//        ),
+        ),
+        Question(
+            question = "Which layout is used to arrange components in a vertical or horizontal manner?",
+            options = listOf("Column and Row", "Grid", "Box", "List"),
+            correctAnswer = 0 // Index of the correct option
+        ),
+        Question(
+            question = "What is the purpose of 'remember' in Compose?",
+            options = listOf(
+                "To store state across recompositions",
+                "To create animations",
+                "To handle navigation",
+                "To define layouts"
+            ),
+            correctAnswer = 0 // Index of the correct option
+        ),
+        Question(
+            question = "How do you specify colors in Jetpack Compose?",
+            options = listOf(
+                "Using Color class",
+                "Using Hex codes",
+                "Using Resource IDs",
+                "All of the above"
+            ),
+            correctAnswer = 3 // Index of the correct option
+        ),
+        Question(
+            question = "Which function is used to display a list of items in Jetpack Compose?",
+            options = listOf("LazyColumn", "RecyclerView", "Column", "List"),
+            correctAnswer = 0 // Index of the correct option
+        ),
+        Question(
+            question = "What is the purpose of 'LaunchedEffect' in Compose?",
+            options = listOf(
+                "To run side effects in response to state changes",
+                "To manage layout updates",
+                "To create animations",
+                "To define UI structure"
+            ),
+            correctAnswer = 0 // Index of the correct  option
+        ),
+        Question(
+            question = "How do you handle clicks in Jetpack Compose?",
+            options = listOf(
+                "Using Modifier.clickable",
+                "Using OnClickListener",
+                "Using GestureDetector",
+                "Using View.OnClick"
+            ),
+            correctAnswer = 0 // Index of the correct option
+        ),
 //        Question(
 //            question = "What is the purpose of the 'Box' layout in Compose?",
 //            options = listOf(
